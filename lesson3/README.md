@@ -11,8 +11,8 @@ Reaching the goal
  - We create a new directory in the working folder `mkdir cmd`
  - Next step was to update our **Makefile**.
 
-  `cmd.o:
-  gcc -m32  -ffreestanding -fno-builtin -nostdlib -c cmd/*.c`
+  `cmd.o:`
+  `gcc -m32  -ffreestanding -fno-builtin -nostdlib -c cmd/*.c`
 
   Basically we told him, that there is a folder called **cmd**, and that he must look there for `*.c` type files.
 
