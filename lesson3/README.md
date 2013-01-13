@@ -8,18 +8,25 @@ Goal
 Reaching the goal
 -
 
-1. We create a new directory in the working folder `mkdir cmd`
-2. Next step was to update our **Makefile**.
+ - We create a new directory in the working folder `mkdir cmd`
+ - Next step was to update our **Makefile**.
 
-`cmd.o:
-gcc -m32  -ffreestanding -fno-builtin -nostdlib -c cmd/*.c`
+  `cmd.o:
+  gcc -m32  -ffreestanding -fno-builtin -nostdlib -c cmd/*.c`
 
-Basically we told him, that there is a folder called **cmd**, and that he must look there for `*.c` type files.
-3. Now we can add different tasks in our **cmd** directory, but stricly havin the structure `cmd_*.c`.
-4. Created a simple  `void hello (void) ` function which outputs to the screen *hell*. 
-5. This function can be easily used in **kmain.c** without the need to import the file.
-6. So now, we addapt the **kmain.c** `main(void)` function this way. Whenever user types `'a'`, `hello()` function will be called.
-7. Call `make` from consola
-8. Mount `*.img` file and start.
+  Basically we told him, that there is a folder called **cmd**, and that he must look there for `*.c` type files.
+
+
+ - Now we can add different tasks in our **cmd** directory, but stricly havin the structure `cmd_*.c`.
+
+ - Created a simple  `void hello (void) ` function which outputs to the screen *hell*. 
+
+ - This function can be easily used in **kmain.c** without the need to import the file.
+
+ - So now, we addapt the **kmain.c** `main(void)` function this way. Whenever user types `'a'`, `hello()` function will be called.
+
+ - Call `make` from consoles
+
+ - Mount `*.img` file and start.
   
     
