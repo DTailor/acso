@@ -53,7 +53,7 @@ plus declared 2 functions we are going to use
 
 - Plus some global variables.
         
-            task_t _sched_tasks[1];  // Tasks array, only 2 at the moment
+            task_t _sched_tasks[3];  // Tasks array
             int task_added = 0;      // number of tasks we added
             int _sched_num_tasks = 0;// current working task
 
@@ -69,23 +69,81 @@ plus declared 2 functions we are going to use
 
 - Next 2 functions are our tasks. They switch the letters on the screen between A/B.
 
-            void task0 (void) {
-              while (1) {
-                yield();
-                vidmem[0] = vidmem[0] == 'B' ? 'A' : 'B';
-                wait();
-              }
-            }
+        void task0 (void) {
+          while (1) {
+            yield();
+            vidmem[0] = vidmem[0] == 'B' ? 'A' : 'B';
+            wait();
+          }
+        }
             
-            void task1 (void) {
-            
-              while (1) {
-                yield();
-                vidmem[2] = vidmem[2] == 'B' ? 'A' : 'B';
-                wait();
-              }
-            }
-            
+        void task1 (void) {
+        
+          while (1) {
+            yield();
+            vidmem[2] = vidmem[2] == 'B' ? 'A' : 'B';
+            wait();
+          }
+        }
+        
     
+-  `void sched_add_task(void* func_ptr)` is the function that adds our task to the scheduler by giving a function pointer
+
+        void sched_add_task(void* func_ptr){
+        
+        // Adding the task into array
+          task_t *task = & _sched_tasks[task_added];
+        
+        // Incrementing task_added for the future task
+          task_added++;
+          unsigned * initial_stack_ptr;
+          initial_stack_ptr = (unsigned) task->stack + TASK_STACK_SIZE;
+        
+          // set stack pointer of the task context to initial_stack_ptr
+          task->state[0].esp = initial_stack_ptr;
+          // set instruction pointer of the task context to func_ptr
+          task->state[0].eip=func_ptr;
+          // set status of the task as runnable
+          task->status=1;
+        
+          task->state[0].eflags = 0x200; //some magic for longjmp
+        
+        }
+
+  -  `void yield(void)` switches from a task to a task. At the moment just switches between task1/task0
+
+            void yield(void){
+                 if (!setjmp(_sched_tasks[_sched_num_tasks].state)) {
+                    if (_sched_num_tasks != 0) {
+                        _sched_num_tasks = 0;
+                    }
+                    else {
+                        _sched_num_tasks = 1;
+                    }
+                    longjmp(_sched_tasks[_sched_num_tasks].state, 1);
+                }   
             
+            }
+            
+  - `void sched_run(void)` - after all is set, comes this function which starts the process.
+
+            void sched_run(void){
+                longjmp(_sched_tasks[0].state,0); 
+            }
+
+  - And the `main(void)` funtion to check how multitasking is working, and if it is really working.
+
+            int main( void )
+            {
+              // putc('a');
+              vidmem[1] = 0x7;
+              // putc('1');
+              vidmem[3] = 0x7;
+              // putc('2');
+              sched_add_task(task0);
+              sched_add_task(task1);
+              sched_run();
+            }
+
+
 
